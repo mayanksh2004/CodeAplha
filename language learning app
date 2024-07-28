@@ -1,0 +1,216 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Lesson {
+public:
+    Lesson(string title, string content) : title(title), content(content) {}
+
+    string getTitle() const { return title; }
+    string getContent() const { return content; }
+
+private:
+    string title;
+    string content;
+};
+
+class Quiz {
+public:
+    Quiz(string question, string correctAnswer) : question(question), correctAnswer(correctAnswer) {}
+
+    string getQuestion() const { return question; }
+    bool checkAnswer(const string &answer) const { return answer == correctAnswer; }
+
+private:
+    string question;
+    string correctAnswer;
+};
+
+class Achievement {
+public:
+    Achievement(string description) : description(description) {}
+
+    string getDescription() const { return description; }
+
+private:
+    string description;
+};
+
+class User {
+public:
+    void completeLesson(const Lesson &lesson) {
+        completedLessons.push_back(lesson);
+    }
+
+    void takeQuiz(const Quiz &quiz) {
+        string userAnswer;
+        cout << "Question: " << quiz.getQuestion() << endl;
+        cout << "Your answer: ";
+        getline(cin, userAnswer);
+
+        if (quiz.checkAnswer(userAnswer)) {
+            cout << "Correct!" << endl;
+            correctAnswers++;
+        } else {
+            cout << "Wrong answer." << endl;
+        }
+    }
+
+    void addAchievement(const Achievement &achievement) {
+        achievements.push_back(achievement);
+    }
+
+    void viewProgress() const {
+        cout << "Completed Lessons: " << completedLessons.size() << endl;
+        cout << "Correct Answers: " << correctAnswers << endl;
+        cout << "Achievements: " << endl;
+        for (const auto &achievement : achievements) {
+            cout << "- " << achievement.getDescription() << endl;
+        }
+    }
+
+private:
+    vector<Lesson> completedLessons;
+    vector<Achievement> achievements;
+    int correctAnswers = 0;
+};
+
+class CommunityForum {
+public:
+    void addPost(const string &post) {
+        posts.push_back(post);
+    }
+
+    void viewPosts() const {
+        cout << "Community Forum Posts: " << endl;
+        for (const auto &post : posts) {
+            cout << "- " << post << endl;
+        }
+    }
+
+private:
+    vector<string> posts;
+};
+
+class LanguageLearningApp {
+public:
+    void addLesson(const Lesson &lesson) {
+        lessons.push_back(lesson);
+    }
+
+    void addQuiz(const Quiz &quiz) {
+        quizzes.push_back(quiz);
+    }
+
+    void addAchievement(const Achievement &achievement) {
+        achievements.push_back(achievement);
+    }
+
+    void addPostToForum(const string &post) {
+        forum.addPost(post);
+    }
+
+    void completeLesson(User &user, int lessonIndex) {
+        if (lessonIndex < lessons.size()) {
+            user.completeLesson(lessons[lessonIndex]);
+            cout << "Lesson completed: " << lessons[lessonIndex].getTitle() << endl;
+        } else {
+            cout << "Invalid lesson index." << endl;
+        }
+    }
+
+    void takeQuiz(User &user, int quizIndex) {
+        if (quizIndex < quizzes.size()) {
+            user.takeQuiz(quizzes[quizIndex]);
+        } else {
+            cout << "Invalid quiz index." << endl;
+        }
+    }
+
+    void awardAchievement(User &user, int achievementIndex) {
+        if (achievementIndex < achievements.size()) {
+            user.addAchievement(achievements[achievementIndex]);
+            cout << "Achievement awarded: " << achievements[achievementIndex].getDescription() << endl;
+        } else {
+            cout << "Invalid achievement index." << endl;
+        }
+    }
+
+    void viewForumPosts() const {
+        forum.viewPosts();
+    }
+
+private:
+    vector<Lesson> lessons;
+    vector<Quiz> quizzes;
+    vector<Achievement> achievements;
+    CommunityForum forum;
+};
+
+int main() {
+    LanguageLearningApp app;
+    User user;
+    int choice;
+
+    // Sample data
+    app.addLesson(Lesson("Lesson 1: Basics", "This is the content of lesson 1."));
+    app.addLesson(Lesson("Lesson 2: Intermediate", "This is the content of lesson 2."));
+    app.addQuiz(Quiz("What is the capital of France?", "Paris"));
+    app.addQuiz(Quiz("What is 2 + 2?", "4"));
+    app.addAchievement(Achievement("First Lesson Completed"));
+    app.addAchievement(Achievement("First Quiz Passed"));
+
+    do {
+        cout << "Language Learning App" << endl;
+        cout << "1. Complete a Lesson" << endl;
+        cout << "2. Take a Quiz" << endl;
+        cout << "3. View Progress" << endl;
+        cout << "4. Add Post to Forum" << endl;
+        cout << "5. View Forum Posts" << endl;
+        cout << "6. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1: {
+                int lessonIndex;
+                cout << "Enter lesson index: ";
+                cin >> lessonIndex;
+                cin.ignore();
+                app.completeLesson(user, lessonIndex);
+                break;
+            }
+            case 2: {
+                int quizIndex;
+                cout << "Enter quiz index: ";
+                cin >> quizIndex;
+                cin.ignore();
+                app.takeQuiz(user, quizIndex);
+                break;
+            }
+            case 3:
+                user.viewProgress();
+                break;
+            case 4: {
+                string post;
+                cout << "Enter your post: ";
+                getline(cin, post);
+                app.addPostToForum(post);
+                break;
+            }
+            case 5:
+                app.viewForumPosts();
+                break;
+            case 6:
+                cout << "Exiting the app." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 6);
+
+    return 0;
+}
