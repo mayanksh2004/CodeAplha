@@ -1,0 +1,87 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Flashcard {
+public:
+    Flashcard(string question, string answer) : question(question), answer(answer) {}
+    string getQuestion() const { return question; }
+    string getAnswer() const { return answer; }
+
+private:
+    string question;
+    string answer;
+};
+
+class FlashcardApp {
+public:
+    void addFlashcard(const string &question, const string &answer) {
+        flashcards.push_back(Flashcard(question, answer));
+    }
+
+    void quiz() {
+        if (flashcards.empty()) {
+            cout << "No flashcards available. Please add some flashcards first." << endl;
+            return;
+        }
+
+        int correctCount = 0;
+        for (const auto &flashcard : flashcards) {
+            cout << "Question: " << flashcard.getQuestion() << endl;
+            string userAnswer;
+            cout << "Your answer: ";
+            getline(cin, userAnswer);
+
+            if (userAnswer == flashcard.getAnswer()) {
+                cout << "Correct!" << endl;
+                correctCount++;
+            } else {
+                cout << "Wrong. The correct answer is: " << flashcard.getAnswer() << endl;
+            }
+        }
+
+        cout << "Quiz completed. You got " << correctCount << " out of " << flashcards.size() << " correct." << endl;
+    }
+
+private:
+    vector<Flashcard> flashcards;
+};
+
+int main() {
+    FlashcardApp app;
+    int choice;
+
+    do {
+        cout << "Flashcard Quiz App" << endl;
+        cout << "1. Add flashcard" << endl;
+        cout << "2. Take quiz" << endl;
+        cout << "3. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1: {
+                string question, answer;
+                cout << "Enter the question: ";
+                getline(cin, question);
+                cout << "Enter the answer: ";
+                getline(cin, answer);
+                app.addFlashcard(question, answer);
+                break;
+            }
+            case 2:
+                app.quiz();
+                break;
+            case 3:
+                cout << "Exiting the app." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 3);
+
+    return 0;
+}
