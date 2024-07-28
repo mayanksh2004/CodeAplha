@@ -1,0 +1,150 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class Exercise {
+public:
+    Exercise(string name, int duration, int caloriesBurned) 
+        : name(name), duration(duration), caloriesBurned(caloriesBurned) {}
+
+    string getName() const { return name; }
+    int getDuration() const { return duration; }
+    int getCaloriesBurned() const { return caloriesBurned; }
+
+private:
+    string name;
+    int duration; // in minutes
+    int caloriesBurned;
+};
+
+class Workout {
+public:
+    void addExercise(const Exercise &exercise) {
+        exercises.push_back(exercise);
+    }
+
+    void displayWorkout() const {
+        for (const auto &exercise : exercises) {
+            cout << "Exercise: " << exercise.getName()
+                 << ", Duration: " << exercise.getDuration()
+                 << " minutes, Calories Burned: " << exercise.getCaloriesBurned() << endl;
+        }
+    }
+
+    int getTotalCaloriesBurned() const {
+        int totalCalories = 0;
+        for (const auto &exercise : exercises) {
+            totalCalories += exercise.getCaloriesBurned();
+        }
+        return totalCalories;
+    }
+
+private:
+    vector<Exercise> exercises;
+};
+
+class FitnessGoal {
+public:
+    FitnessGoal(string description, int targetCalories) 
+        : description(description), targetCalories(targetCalories) {}
+
+    string getDescription() const { return description; }
+    int getTargetCalories() const { return targetCalories; }
+
+private:
+    string description;
+    int targetCalories;
+};
+
+class FitnessApp {
+public:
+    void addWorkout(const Workout &workout) {
+        workouts.push_back(workout);
+    }
+
+    void setGoal(const FitnessGoal &goal) {
+        fitnessGoal = goal;
+    }
+
+    void viewProgress() const {
+        int totalCaloriesBurned = 0;
+        for (const auto &workout : workouts) {
+            totalCaloriesBurned += workout.getTotalCaloriesBurned();
+        }
+
+        cout << "Total Calories Burned: " << totalCaloriesBurned << endl;
+        if (fitnessGoal.getTargetCalories() != 0) {
+            cout << "Fitness Goal: " << fitnessGoal.getDescription() << endl;
+            cout << "Target Calories to Burn: " << fitnessGoal.getTargetCalories() << endl;
+            cout << "Calories Remaining: " << fitnessGoal.getTargetCalories() - totalCaloriesBurned << endl;
+        }
+    }
+
+private:
+    vector<Workout> workouts;
+    FitnessGoal fitnessGoal = FitnessGoal("", 0); // default goal with 0 target calories
+};
+
+int main() {
+    FitnessApp app;
+    int choice;
+
+    do {
+        cout << "Fitness Tracking App" << endl;
+        cout << "1. Add Workout" << endl;
+        cout << "2. Set Fitness Goal" << endl;
+        cout << "3. View Progress" << endl;
+        cout << "4. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1: {
+                Workout workout;
+                int numExercises;
+                cout << "Enter the number of exercises in this workout: ";
+                cin >> numExercises;
+                cin.ignore();
+
+                for (int i = 0; i < numExercises; ++i) {
+                    string name;
+                    int duration, caloriesBurned;
+                    cout << "Enter exercise name: ";
+                    getline(cin, name);
+                    cout << "Enter duration (in minutes): ";
+                    cin >> duration;
+                    cout << "Enter calories burned: ";
+                    cin >> caloriesBurned;
+                    cin.ignore();
+                    workout.addExercise(Exercise(name, duration, caloriesBurned));
+                }
+                app.addWorkout(workout);
+                break;
+            }
+            case 2: {
+                string description;
+                int targetCalories;
+                cout << "Enter fitness goal description: ";
+                getline(cin, description);
+                cout << "Enter target calories to burn: ";
+                cin >> targetCalories;
+                cin.ignore();
+                app.setGoal(FitnessGoal(description, targetCalories));
+                break;
+            }
+            case 3:
+                app.viewProgress();
+                break;
+            case 4:
+                cout << "Exiting the app." << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
